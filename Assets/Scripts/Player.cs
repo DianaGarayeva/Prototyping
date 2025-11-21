@@ -13,6 +13,9 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private GameObject _Laser_prefab;
+
+    [SerializeField]
+    private int _lives = 3;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,6 +31,15 @@ public class Player : MonoBehaviour
             Instantiate(_Laser_prefab, transform.position+new Vector3(0f, 0.8f, 0f), Quaternion.identity);
         }
         Motion();
+    }
+
+    public void Damage()
+    {
+        _lives--;
+        if( _lives < 1)
+        {
+            Destroy(this.gameObject)
+        }
     }
 
     void Motion()
