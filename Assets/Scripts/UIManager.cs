@@ -1,0 +1,89 @@
+using System;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class UIManager : MonoBehaviour
+{
+    // handle to text
+    [SerializeField]
+    private Text _score;
+    [SerializeField]
+    private Image _livesImg;
+    [SerializeField]
+    private Sprite[] _liveSprites;
+    [SerializeField]
+    private Text _gameOver;
+    [SerializeField]
+    private Text _restartText;
+    [SerializeField]
+    private GameManager _gameManager;
+    [SerializeField]
+    private Image _thrustersController;
+    [SerializeField]
+    private Text _chargeText;
+    private float maxWidth; 
+    void Start()
+    {
+        maxWidth = _thrustersController.rectTransform.sizeDelta.x; 
+        _score.text = "Score: " + 0;
+        _gameOver.gameObject.SetActive(false);
+        _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
+        if (_gameManager == null)
+        {
+            Debug.LogError("game manager is NULL");
+        }
+        _thrustersController.color = Color.green;
+        _thrustersController.rectTransform.sizeDelta = new Vector2(0f, _thrustersController.rectTransform.sizeDelta.y);
+        Debug.Log(_thrustersController.rectTransform.sizeDelta.x);
+    }
+
+
+    public void UpdateCharge(float chargePercent)
+    {
+        _thrustersController.rectTransform.sizeDelta = new Vector2(maxWidth * chargePercent, _thrustersController.rectTransform.sizeDelta.y);
+        _chargeText.text = Math.Round(chargePercent*100).ToString() + "%";
+    }
+
+
+    public void UpdateScore(int playerScore)
+    {
+        _score.text = "Score: " + playerScore.ToString();
+    }
+
+    public void UpdateLives(int currentLives)
+    {
+        if (currentLives < 0)
+        {
+            currentLives = 0;
+        }
+
+        _livesImg.sprite = _liveSprites[currentLives];
+
+        if (currentLives == 0)
+        {
+            GameOverSequence();
+        }
+    }
+
+
+    void GameOverSequence()
+    {
+        _gameOver.gameObject.SetActive(true);
+        _restartText.gameObject.SetActive(true);
+        _gameManager.GameOver();
+        StartCoroutine(GameOverFlickerRoutine());
+    }
+
+
+    IEnumerator GameOverFlickerRoutine()
+    {
+        while (true)
+        {
+            _gameOver.text = "GAME OVER";
+            yield return new WaitForSeconds(0.5f);
+            _gameOver.text = " ";
+            yield return new WaitForSeconds(0.5f);
+        }
+    }
+}
