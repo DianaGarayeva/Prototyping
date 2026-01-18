@@ -55,7 +55,10 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private GameObject _shieldVisualizer;
-
+    [SerializeField]
+    private int _maxShieldStrength = 4;
+    private int _currentShieldStrength;
+    
 
     [SerializeField]
     private int _score = 0;
@@ -76,6 +79,8 @@ public class Player : MonoBehaviour
     [SerializeField]
     private AudioClip _LaserSoundClip;
     private AudioSource _audioSource;
+
+
 
     void Start()
     {
@@ -198,25 +203,34 @@ public class Player : MonoBehaviour
 
     public void Damage()
     {
-        if(_isShieldActive == true)
+        if (_isShieldActive == true && _currentShieldStrength > 0)
         {
-            _isShieldActive = false;
-            _shieldVisualizer.SetActive(false);
+            _currentShieldStrength--;
+            float shieldDeg = (float)_currentShieldStrength / _maxShieldStrength;
+            _uiManager.UpdateShield(shieldDeg);
+            Debug.Log(_currentShieldStrength);
+            if (_isShieldActive && _currentShieldStrength <= 0)
+            {
+                _uiManager.UpdateShield(0);
+                _isShieldActive = false;
+                _shieldVisualizer.SetActive(false);
+            }
             return;
         }
+
         else
         {
             _lives--;
 
-            if(_lives == 2)
+            if (_lives == 2)
             {
                 _rightEngine.SetActive(true);
             }
-            else if(_lives == 1)
+            else if (_lives == 1)
             {
                 _leftEngine.SetActive(true);
             }
-                _uiManager.UpdateLives(_lives);
+            _uiManager.UpdateLives(_lives);
 
             if (_lives < 1)
             {
@@ -230,6 +244,9 @@ public class Player : MonoBehaviour
 
     public void ShieldActive()
     {
+        _currentShieldStrength = _maxShieldStrength;
+        _uiManager.UpdateShield(1);
+        Debug.Log(_currentShieldStrength);
         _isShieldActive = true;
         _shieldVisualizer.SetActive(true);
     }

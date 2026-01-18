@@ -22,7 +22,12 @@ public class UIManager : MonoBehaviour
     private Image _thrustersController;
     [SerializeField]
     private Text _chargeText;
-    private float maxWidth; 
+    private float maxWidth;
+    [SerializeField]
+    private Image _shieldController;
+    [SerializeField]
+    private Text _shieldText;
+    private float maxShieldWidth;
     void Start()
     {
         maxWidth = _thrustersController.rectTransform.sizeDelta.x; 
@@ -35,9 +40,17 @@ public class UIManager : MonoBehaviour
         }
         _thrustersController.color = Color.green;
         _thrustersController.rectTransform.sizeDelta = new Vector2(0f, _thrustersController.rectTransform.sizeDelta.y);
-        Debug.Log(_thrustersController.rectTransform.sizeDelta.x);
+
+        maxShieldWidth = _shieldController.rectTransform.sizeDelta.x;
+        _shieldController.rectTransform.sizeDelta = new Vector2(0f, _shieldController.rectTransform.sizeDelta.y);
+        _shieldText.text = "";
     }
 
+    public void UpdateShield(float shieldPercent)
+    {
+        _shieldController.rectTransform.sizeDelta = new Vector2(maxShieldWidth * shieldPercent, _shieldController.rectTransform.sizeDelta.y);
+        _shieldText.text = Math.Round(shieldPercent * 100).ToString()+ "%";
+    }
 
     public void UpdateCharge(float chargePercent)
     {
