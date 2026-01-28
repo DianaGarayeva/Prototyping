@@ -11,6 +11,8 @@ public class Player : MonoBehaviour
     private float _speed = 5.0f;
     private float _speedMultiplier = 5f;
 
+    private SpawnManager _spawnManager;
+
     //For thrusters
     [SerializeField]
     private float _maxCharge = 20f; // Max charge of thrusters 
@@ -33,43 +35,32 @@ public class Player : MonoBehaviour
     private float _fireRate = 1f;
     [SerializeField]
     private float _canFire = -1;
-
     [SerializeField]
-    private GameObject _Laser_prefab;
+    private GameObject _laserPrefab;
 
     [SerializeField]
     private int _lives = 3;
 
-    private SpawnManager _spawnManager;
 
     [SerializeField]    
     private bool _isTripleShotActive = false;
-
-
     [SerializeField]
     private bool _isShieldActive = false;
-
-
     [SerializeField]
     private GameObject _tripleShot;
-
     [SerializeField]
     private GameObject _shieldVisualizer;
     [SerializeField]
     private int _maxShieldStrength = 4;
     private int _currentShieldStrength;
-    
-
     [SerializeField]
     private int _score = 0;
 
     [SerializeField]
     private UIManager _uiManager;
 
-
     [SerializeField]
     private GameObject _rightEngine;
-
     [SerializeField]
     private GameObject _leftEngine;
 
@@ -80,26 +71,34 @@ public class Player : MonoBehaviour
     private AudioClip _LaserSoundClip;
     private AudioSource _audioSource;
 
+    //Ammo
+    private int _maxShots = 15;
+    private int _currentShot;
 
+    //Special shot power-up
+    private bool _isSpecialShotActive = false;
+    
+    
 
+//Start
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
-         _spawnManager = GameObject.Find("Spawn Manager").GetComponent<SpawnManager>();
 
-        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
-        _audioSource = GetComponent<AudioSource>();
+         _spawnManager = GameObject.Find("Spawn Manager").GetComponent<SpawnManager>();
         if (_spawnManager == null)
         {
             Debug.LogError("The Spawn Manager is NULL");
         }
 
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
         if (_uiManager == null)
         {
             Debug.LogError("UI manager is NULL");
         }
 
-        if(_audioSource == null)
+        _audioSource = GetComponent<AudioSource>();
+        if (_audioSource == null)
         {
             Debug.LogError("Audio Sourse is NULL");
         }
@@ -107,20 +106,27 @@ public class Player : MonoBehaviour
         {
             _audioSource.clip = _LaserSoundClip; 
         }
+
+        _currentShot = _maxShots;
+
     }
 
+
+
+    //Update
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _canFire)
         {
             FireLaser();
         }
-        Motion();
+        Movement();
 
 
     }
 
-    void Motion()
+    //Movement
+    void Movement()
     {
         float _currentSpeed = _speed;
 
@@ -184,23 +190,35 @@ public class Player : MonoBehaviour
         transform.Translate(new Vector3(horizontalInput, verticalInput, 0) * _currentSpeed * Time.deltaTime);
     }
 
-
-
+    //Shooting 
     public void FireLaser()
     {
         _canFire = Time.time + _fireRate;
 
         if (_isTripleShotActive == true)
         {
+            _currentShot--;
             Instantiate(_tripleShot, transform.position, Quaternion.identity);
+        }else if (_isSpecialShotActive == true)
+        {
+            _currentShot--;
+            Vector3 angle = new Vector3(0, 0, 15f);
+            for(int i = 0; i < 24; i++)
+            {
+                Instantiate(_laserPrefab, transform.position, Quaternion.Euler(angle*i));
+            }
+
         }
         else
         {
-            Instantiate(_Laser_prefab, transform.position + new Vector3(0f, 0.8f, 0f), Quaternion.identity);
+            _currentShot--;
+            Instantiate(_laserPrefab, transform.position + new Vector3(0f, 0.8f, 0f), Quaternion.identity);
         }
+        _uiManager.UpdateAmmo(_currentShot);
         _audioSource.Play();
     }
 
+    //Damage
     public void Damage()
     {
         if (_isShieldActive == true && _currentShieldStrength > 0)
@@ -209,6 +227,7 @@ public class Player : MonoBehaviour
             float shieldDeg = (float)_currentShieldStrength / _maxShieldStrength;
             _uiManager.UpdateShield(shieldDeg);
             Debug.Log(_currentShieldStrength);
+
             if (_isShieldActive && _currentShieldStrength <= 0)
             {
                 _uiManager.UpdateShield(0);
@@ -222,14 +241,7 @@ public class Player : MonoBehaviour
         {
             _lives--;
 
-            if (_lives == 2)
-            {
-                _rightEngine.SetActive(true);
-            }
-            else if (_lives == 1)
-            {
-                _leftEngine.SetActive(true);
-            }
+            CheckLives();
             _uiManager.UpdateLives(_lives);
 
             if (_lives < 1)
@@ -242,6 +254,43 @@ public class Player : MonoBehaviour
 
     }
 
+    private void CheckLives()
+    {
+        if (_lives == 3)
+        {
+            _rightEngine.SetActive(false);
+            _leftEngine.SetActive(false);
+
+        }
+        if (_lives == 2)
+        {
+            _leftEngine.SetActive(false);
+            _rightEngine.SetActive(true);
+        }
+        else if (_lives == 1)
+        {
+            _rightEngine.SetActive(true);
+            _leftEngine.SetActive(true);
+        }
+    }
+
+    //Power-ups
+    public void HealthPowerUp()
+    {
+        if (_lives < 3)
+        {
+            _lives++;
+            CheckLives();
+            _uiManager.UpdateLives(_lives);
+        }
+    }
+
+    public void Ammo()
+    {
+        _currentShot = _maxShots;
+        _uiManager.UpdateAmmo(_currentShot);
+    }
+
     public void ShieldActive()
     {
         _currentShieldStrength = _maxShieldStrength;
@@ -249,6 +298,18 @@ public class Player : MonoBehaviour
         Debug.Log(_currentShieldStrength);
         _isShieldActive = true;
         _shieldVisualizer.SetActive(true);
+    }
+
+    public void SpecialShotActive()
+    {
+        _isSpecialShotActive = true;
+        StartCoroutine(SpecialShotRoutine());
+    }
+
+    IEnumerator SpecialShotRoutine()
+    {
+        yield return new WaitForSeconds(5f);
+        _isSpecialShotActive = false;
     }
 
     public void TripleShotActive() 
@@ -275,7 +336,7 @@ public class Player : MonoBehaviour
         _speed /= _speedMultiplier;
     }
 
-
+    //Add score
     public void AddScore(int points)
     {
         _score += points;

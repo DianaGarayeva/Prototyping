@@ -38,10 +38,13 @@ public class PowerUp : MonoBehaviour
                         player.ShieldActive();
                         break;
                     case 3:
+                        player.Ammo();
                         break;
                     case 4:
+                        player.HealthPowerUp();
                         break;
                     case 5:
+                        player.SpecialShotActive();
                         break;
                     default:
                         Debug.Log("Default");

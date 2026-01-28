@@ -28,6 +28,8 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Text _shieldText;
     private float maxShieldWidth;
+    [SerializeField]
+    private Text _ammoText;
     void Start()
     {
         maxWidth = _thrustersController.rectTransform.sizeDelta.x; 
@@ -44,12 +46,33 @@ public class UIManager : MonoBehaviour
         maxShieldWidth = _shieldController.rectTransform.sizeDelta.x;
         _shieldController.rectTransform.sizeDelta = new Vector2(0f, _shieldController.rectTransform.sizeDelta.y);
         _shieldText.text = "";
+
+        _ammoText.text = "Shots: 15";
+    }
+
+    public void UpdateAmmo(int ammo)
+    {
+        if (ammo == 0)
+        {
+            _ammoText.text = "No shots!";
+        }else
+        {
+            _ammoText.text = "Shots: " + ammo;
+        }
+
     }
 
     public void UpdateShield(float shieldPercent)
     {
-        _shieldController.rectTransform.sizeDelta = new Vector2(maxShieldWidth * shieldPercent, _shieldController.rectTransform.sizeDelta.y);
-        _shieldText.text = Math.Round(shieldPercent * 100).ToString()+ "%";
+        if (shieldPercent == 0)
+        {
+            _shieldText.text = "";
+        }
+        else
+        {
+            _shieldController.rectTransform.sizeDelta = new Vector2(maxShieldWidth * shieldPercent, _shieldController.rectTransform.sizeDelta.y);
+            _shieldText.text = Math.Round(shieldPercent * 100).ToString() + "%";
+        }
     }
 
     public void UpdateCharge(float chargePercent)

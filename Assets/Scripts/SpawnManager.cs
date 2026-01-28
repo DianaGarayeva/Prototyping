@@ -42,8 +42,23 @@ public class SpawnManager : MonoBehaviour
         while (_stopSpawning == false)
         {
             Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7f, 0);
-            int randomPowerUp = Random.Range(0, 6);
-            Instantiate(_powerups[randomPowerUp], posToSpawn, Quaternion.identity);
+            float chance = Random.Range(0f, 1f);
+            if (chance <= 0.2)
+            {
+                Debug.Log(chance);
+                Instantiate(_powerups[5], posToSpawn, Quaternion.identity);
+            }
+
+            else
+            {
+                int randomPowerUp;
+                do
+                {
+                    randomPowerUp = Random.Range(0, _powerups.Length);
+                } while (randomPowerUp == 5);
+                Debug.Log(chance);
+                Instantiate(_powerups[randomPowerUp], posToSpawn, Quaternion.identity);
+            }
             yield return new WaitForSeconds(Random.Range(3, 8));
         }
     }
