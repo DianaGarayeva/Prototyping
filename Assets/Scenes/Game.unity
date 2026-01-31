@@ -840,7 +840,7 @@ MonoBehaviour:
   _isInCoolDown: 0
   _fireRate: 1
   _canFire: -1
-  _Laser_prefab: {fileID: 2628013943968091080, guid: cbe0d4fbd3fadb640a8c49d3c1346cfc, type: 3}
+  _laserPrefab: {fileID: 2628013943968091080, guid: cbe0d4fbd3fadb640a8c49d3c1346cfc, type: 3}
   _lives: 3
   _isTripleShotActive: 0
   _isShieldActive: 0
@@ -1760,6 +1760,7 @@ MonoBehaviour:
   _chargeText: {fileID: 417466813}
   _shieldController: {fileID: 999626478}
   _shieldText: {fileID: 1425717712}
+  _ammoText: {fileID: 1984063881}
 --- !u!114 &1171064524
 MonoBehaviour:
   m_ObjectHideFlags: 0
