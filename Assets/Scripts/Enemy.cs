@@ -12,16 +12,16 @@ public class Enemy : MonoBehaviour
     [SerializeField]
 
     private AudioClip _explosionAudio;
-
     private AudioSource _audioSource;
 
+
+    //For firing
     [SerializeField]
     private GameObject _laserPrefab;
-
     private float _fireRate = 1.0f;
     private float _canFire = 0;
 
-
+    //For types of movement
     private float _angle;
     private float _amplitude = 2f;
     private float _frequency = 2f;
@@ -31,6 +31,7 @@ public class Enemy : MonoBehaviour
     private Vector3 center = new Vector3(0, 0, 0);
     private bool _isAlive;
 
+    //Choosing type of movement
     private enum TypesOfMovement
     {
         Straight,
@@ -39,20 +40,33 @@ public class Enemy : MonoBehaviour
         Circling
     }
     private TypesOfMovement movementType;
+    
+    //Enemy shield
+    [SerializeField]
+    private GameObject _shield;
+    private bool _isShieldActive;
+
 
     void Start()
     {
+        _isAlive = true;
+
         _startX = transform.position.x;
         _angle = Random.Range(-45f, 45f);
-        _isAlive = true;
+
         _player = GameObject.Find("Player").GetComponent<Player>();
+        if (_player == null)
+        {
+            Debug.LogError("The player is NULL");
+        }
+
         _anim = GetComponent<Animator>();
-        _audioSource = GetComponent<AudioSource>();
         if (_anim == null)
         {
             Debug.LogError("The animator is NULL");
         }
 
+        _audioSource = GetComponent<AudioSource>();
         if (_audioSource == null)
         {
             Debug.LogError("Audio Source is NULL");
@@ -60,6 +74,19 @@ public class Enemy : MonoBehaviour
         else
         {
             _audioSource.clip = _explosionAudio;
+        }
+
+        float chance = Random.Range(0f, 1f);
+        //Debug.Log(chance);
+        if (chance <= 0.5)
+        {
+            _shield.SetActive(true);
+            _isShieldActive = true;
+        }
+        else
+        {
+            _shield.SetActive(false);
+            _isShieldActive = false;
         }
 
         movementType = (TypesOfMovement)Random.Range(0, 4);
@@ -93,7 +120,6 @@ public class Enemy : MonoBehaviour
 
     }
 
-
     //Type of movements
     void Straight()
     {
@@ -121,10 +147,7 @@ public class Enemy : MonoBehaviour
         float x = center.x + Mathf.Cos(_angleForCircularMotion) * _radius;
         float y = center.y + Mathf.Sin(_angleForCircularMotion) * _radius;
         transform.position = new Vector3(x, y, 0);
-        if (transform.position.y < -5)
-        {
-            transform.position = new Vector3(Random.Range(-8f, 8f), 8f, 0);
-        }
+
     }
 
     void Angular()
@@ -140,9 +163,7 @@ public class Enemy : MonoBehaviour
         }
     }
 
-    //Choose type of movement
-
-
+    // Fire for Enemy
     private void FireLaser()
     {
         if(_isAlive == true)
@@ -172,13 +193,18 @@ public class Enemy : MonoBehaviour
         }
         else if (other.tag == "Laser")
         {
+            //Shield for enemy
+            if(_isShieldActive == true)
+            {
+                _shield.SetActive(false);
+                _isShieldActive = false;
+                return;
+            }
             Destroy(other.gameObject);
-
             if (_player != null)
             {
                 _player.AddScore(10);
             }
-
             Destroying();
             _isAlive = false;
 

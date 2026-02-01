@@ -1908,6 +1908,7 @@ MonoBehaviour:
   - {fileID: 3353157279778926485, guid: 1136aa5dada42784ebcf005666d8d009, type: 3}
   - {fileID: 659182315146115735, guid: 8885d2da6de0dea4787a670fb6b1e48b, type: 3}
   - {fileID: 5718961214447193908, guid: c39e91c04d81e6947a9c50f2f61ffc74, type: 3}
+  - {fileID: 9154202702959074483, guid: 51870cb05caa58f4b8aa832e8dfbf473, type: 3}
 --- !u!1001 &1318555844
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2600,5 +2601,5 @@ MonoBehaviour:
   sharedProfile: {fileID: 11400000, guid: f482bde4cf8ffc24f95e8101f26eaa26, type: 2}
   isGlobal: 1
   blendDistance: 0
-  weight: 1
+  weight: 0.08
   priority: 0

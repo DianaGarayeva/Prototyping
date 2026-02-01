@@ -77,7 +77,9 @@ public class Player : MonoBehaviour
 
     //Special shot power-up
     private bool _isSpecialShotActive = false;
-    
+
+    //Negative Power-up
+    private bool _isNegativePowerUpActive = false;
     
 
 //Start
@@ -129,6 +131,15 @@ public class Player : MonoBehaviour
     void Movement()
     {
         float _currentSpeed = _speed;
+
+        if (_isNegativePowerUpActive == true)
+        {
+            _currentSpeed = 0;
+        }
+        //else
+        //{
+        //    _currentSpeed = _speed;
+        //}
 
         if (Input.GetKey(KeyCode.LeftShift) && _currentCharge > 0 && _isInCoolDown == false)
         {
@@ -336,6 +347,16 @@ public class Player : MonoBehaviour
         _speed /= _speedMultiplier;
     }
 
+    public void NegativePowerUpActive()
+    {
+        _isNegativePowerUpActive = true;
+        StartCoroutine(NegativePowerUpRoutine());
+    }
+    IEnumerator NegativePowerUpRoutine()
+    {
+        yield return new WaitForSeconds(5f);
+        _isNegativePowerUpActive = false;
+    }
     //Add score
     public void AddScore(int points)
     {
