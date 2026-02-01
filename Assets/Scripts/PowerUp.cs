@@ -8,14 +8,33 @@ public class PowerUp : MonoBehaviour
     private int _powerupID;
     [SerializeField]
     private AudioClip _clip;
+    private GameObject player;
+    private Transform target;
+    private float rotationSpeed = 360f;
 
     private void Update()
     {
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
-        if (transform.position.y < -6f)
+        player = GameObject.Find("Player");
+        target = player.transform;
+        
+        if (Input.GetKey(KeyCode.C))
         {
-            Destroy(this.gameObject);
+            Vector2 direction = target.position - transform.position;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            Quaternion targetRotation = Quaternion.Euler(0f, 0f, angle);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            transform.position = Vector3.MoveTowards(transform.position, target.position, _speed * 3 * Time.deltaTime);
         }
+        else
+        {
+            transform.rotation = Quaternion.Euler(0, 0, 0);
+            transform.Translate(Vector3.down * _speed * Time.deltaTime);
+            if (transform.position.y < -6f)
+            {
+                Destroy(this.gameObject);
+            }
+        }
+        
     }
 
     public void OnTriggerEnter2D(Collider2D other)

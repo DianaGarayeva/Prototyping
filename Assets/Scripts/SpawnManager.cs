@@ -24,23 +24,18 @@ public class SpawnManager : MonoBehaviour
         StartCoroutine(EnemyWaveRoutine());
     }
 
-    public void EnemyWave()
-    {
-        for (int i = 0; i < _enemiesToSpawn; i++)
-        {
-            Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
-            GameObject newEnemy = Instantiate(_enemyPrefab, posToSpawn, Quaternion.identity);
-            newEnemy.transform.parent = _enemyContainer.transform;
-        }
-        _enemiesToSpawn++;
-    }
-
     IEnumerator EnemyWaveRoutine()
     {
         while (_stopSpawning == false)
         {
             yield return new WaitUntil(() => _enemyContainer.transform.childCount == 0);
-            EnemyWave();
+            for (int i = 0; i < _enemiesToSpawn; i++)
+            {
+                Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
+                GameObject newEnemy = Instantiate(_enemyPrefab, posToSpawn, Quaternion.identity);
+                newEnemy.transform.parent = _enemyContainer.transform;
+            }
+            _enemiesToSpawn++;
             yield return new WaitForSeconds(2f);
         }
     }
@@ -50,13 +45,8 @@ public class SpawnManager : MonoBehaviour
         _stopSpawning = true;
     }
 
-
-
-    
-
     IEnumerator SpawnRoutine()
-    {
-        //yield return new WaitForSeconds(3.0f);
+    {   
         while (_stopSpawning==false)
         {
             Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);

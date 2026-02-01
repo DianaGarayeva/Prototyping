@@ -198,6 +198,7 @@ public class Enemy : MonoBehaviour
             {
                 _shield.SetActive(false);
                 _isShieldActive = false;
+                Destroy(_laserPrefab);
                 return;
             }
             Destroy(other.gameObject);
@@ -216,6 +217,7 @@ public class Enemy : MonoBehaviour
     {
         _anim.SetTrigger("OnEnemyDeath");
         _speed = 0f;
+        Destroy(_shield);
         Destroy(this.gameObject, 2.6f);
         _audioSource.Play();
         Destroy(GetComponent<Collider2D>());
