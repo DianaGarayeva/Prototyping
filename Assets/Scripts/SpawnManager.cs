@@ -12,7 +12,8 @@ public class SpawnManager : MonoBehaviour
     private bool _stopSpawning = false;
     [SerializeField]
     private GameObject[] _powerups;
-
+    [SerializeField]
+    private int[] _powerUpFrequency;
     private int _enemiesToSpawn = 1;
 
 
@@ -45,16 +46,25 @@ public class SpawnManager : MonoBehaviour
         _stopSpawning = true;
     }
 
-    IEnumerator SpawnRoutine()
-    {   
-        while (_stopSpawning==false)
+    //Balanced spawning 
+    int GetRandomPowerUpIndex()
+    {
+        int totalFrequency = 0;
+        foreach(var frequency in _powerUpFrequency)
         {
-            Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
-            GameObject newEnemy = Instantiate(_enemyPrefab, posToSpawn, Quaternion.identity);
-            newEnemy.transform.parent = _enemyContainer.transform;
-            yield return new WaitForSeconds(3.0f);
+            totalFrequency += frequency;
         }
-        
+        int randomValue = Random.Range(0, totalFrequency);
+        int currentFrequency = 0;
+        for(int i=0; i<_powerUpFrequency.Length; i++)
+        {
+            currentFrequency += _powerUpFrequency[i];
+            if (randomValue < currentFrequency)
+            {
+                return i;
+            }
+        }
+        return 0;
     }
 
     IEnumerator SpawnPowerUpRoutine()
@@ -62,24 +72,23 @@ public class SpawnManager : MonoBehaviour
         while (_stopSpawning == false)
         {
             Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7f, 0);
-            float chance = Random.Range(0f, 1f);
-            if (chance <= 0.2)
-            {
-                Debug.Log(chance);
-                Instantiate(_powerups[5], posToSpawn, Quaternion.identity);
-            }
-
-            else
-            {
-                int randomPowerUp;
-                do
-                {
-                    randomPowerUp = Random.Range(0, _powerups.Length);
-                } while (randomPowerUp == 5);
-                Debug.Log(chance);
-                Instantiate(_powerups[randomPowerUp], posToSpawn, Quaternion.identity);
-            }
-            yield return new WaitForSeconds(Random.Range(3, 8));
+            int index  = GetRandomPowerUpIndex();
+            Debug.Log(index);
+            Instantiate(_powerups[index], posToSpawn, Quaternion.identity);
+            yield return new WaitForSeconds(Random.Range(3f, 8f));
         }
+    }
+
+
+    IEnumerator SpawnRoutine()
+    {
+        while (_stopSpawning == false)
+        {
+            Vector3 posToSpawn = new Vector3(Random.Range(-8f, 8f), 7, 0);
+            GameObject newEnemy = Instantiate(_enemyPrefab, posToSpawn, Quaternion.identity);
+            newEnemy.transform.parent = _enemyContainer.transform;
+            yield return new WaitForSeconds(3.0f);
+        }
+
     }
 }
