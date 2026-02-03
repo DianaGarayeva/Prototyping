@@ -68,6 +68,7 @@
     <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\SpawnManager.cs" />
     <Compile Include="Assets\Scripts\UIManager.cs" />
+    <Compile Include="Assets\Scripts\Camera_Shake.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

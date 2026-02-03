@@ -13,7 +13,7 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private GameObject[] _powerups;
     [SerializeField]
-    private int[] _powerUpFrequency;
+    private int[] _powerUpFrequency = { 5,5,5,7,3,2,5};
     private int _enemiesToSpawn = 1;
 
 

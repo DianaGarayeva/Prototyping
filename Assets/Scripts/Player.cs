@@ -80,9 +80,10 @@ public class Player : MonoBehaviour
 
     //Negative Power-up
     private bool _isNegativePowerUpActive = false;
-    
 
-//Start
+    //Camera
+    private Camera_Shake cameraShake;
+
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
@@ -109,6 +110,7 @@ public class Player : MonoBehaviour
             _audioSource.clip = _LaserSoundClip; 
         }
 
+        cameraShake = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera_Shake>();
         _currentShot = _maxShots;
 
     }
@@ -237,7 +239,6 @@ public class Player : MonoBehaviour
             _currentShieldStrength--;
             float shieldDeg = (float)_currentShieldStrength / _maxShieldStrength;
             _uiManager.UpdateShield(shieldDeg);
-            Debug.Log(_currentShieldStrength);
 
             if (_isShieldActive && _currentShieldStrength <= 0)
             {
@@ -245,6 +246,7 @@ public class Player : MonoBehaviour
                 _isShieldActive = false;
                 _shieldVisualizer.SetActive(false);
             }
+
             return;
         }
 
@@ -262,6 +264,7 @@ public class Player : MonoBehaviour
                 Destroy(this.gameObject);
             }
         }
+        cameraShake.Shake();
 
     }
 
