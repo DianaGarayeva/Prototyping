@@ -55,6 +55,10 @@ MonoBehaviour:
   _explosionAudio: {fileID: 8300000, guid: a885c043fab7e46438bba03ba9dab6bc, type: 3}
   _laserPrefab: {fileID: 4300542099506933174, guid: 9e36e4ad448ae10438d21c0e04851b56, type: 3}
   _shield: {fileID: 9201679680965980123}
+  _detectionDistance: 6
+  _pickUpLayer:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!212 &-784032225722575528
 SpriteRenderer:
   m_ObjectHideFlags: 0

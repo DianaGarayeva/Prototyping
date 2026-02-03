@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 6828752340597431423}
   - component: {fileID: 454276425269977607}
   - component: {fileID: 352182225495067033}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Ammo_powerup
-  m_TagString: Untagged
+  m_TagString: PowerUp
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour
     //For firing
     [SerializeField]
     private GameObject _laserPrefab;
-    private float _fireRate = 1.0f;
+    private float _fireRate = 3.0f;
     private float _canFire = 0;
 
     //For types of movement
@@ -46,6 +46,15 @@ public class Enemy : MonoBehaviour
     private GameObject _shield;
     private bool _isShieldActive;
 
+    //Pick-up behavior 
+    [SerializeField]
+    private float _detectionDistance = 6f;
+    [SerializeField]
+    private LayerMask _pickUpLayer;
+    private float _nextPickUpFire = 0;
+    private float _pickUpFireRate = 0.5f;
+
+   
 
     void Start()
     {
@@ -113,12 +122,31 @@ public class Enemy : MonoBehaviour
                 break;
         }
 
-        if (Time.time > _canFire)
+        if (Time.time > _canFire && _isAlive == true)
         {
             FireLaser();
         }
-
+        DetectPickUpAndShoot();
     }
+
+    //Detect pickups
+    void DetectPickUpAndShoot()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, _detectionDistance, _pickUpLayer);
+        Debug.DrawRay(
+            transform.position,
+            Vector2.down * _detectionDistance,
+            Color.red
+        );
+        if (hit.collider != null && Time.time > _nextPickUpFire)
+        {
+            _nextPickUpFire = Time.time + _pickUpFireRate;
+            FireLaser();
+        }   
+    }
+
+    //Detect player behind 
+
 
     //Type of movements
     void Straight()
@@ -198,7 +226,7 @@ public class Enemy : MonoBehaviour
             {
                 _shield.SetActive(false);
                 _isShieldActive = false;
-                Destroy(_laserPrefab);
+                Destroy(other.gameObject);
                 return;
             }
             Destroy(other.gameObject);
