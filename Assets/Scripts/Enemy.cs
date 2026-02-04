@@ -8,18 +8,26 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private Player _player;
 
+    private Transform _target;
+
     private Animator _anim;
     [SerializeField]
-
     private AudioClip _explosionAudio;
     private AudioSource _audioSource;
 
+    //Agressive behavior
+    private bool _isAgressive = false;
+    private bool _hasRammed = false;
+    private float _ramCoolDown = 3f;
+    private float ramTimer;
 
     //For firing
     [SerializeField]
     private GameObject _laserPrefab;
     private float _fireRate = 3.0f;
     private float _canFire = 0;
+
+    private Rigidbody2D _rigidBody;
 
     //For types of movement
     private float _angle;
@@ -53,8 +61,9 @@ public class Enemy : MonoBehaviour
     private LayerMask _pickUpLayer;
     private float _nextPickUpFire = 0;
     private float _pickUpFireRate = 0.5f;
+    
 
-   
+
 
     void Start()
     {
@@ -67,6 +76,12 @@ public class Enemy : MonoBehaviour
         if (_player == null)
         {
             Debug.LogError("The player is NULL");
+        }
+
+        _target = GameObject.Find("Player").transform;
+        if (_target == null)
+        {
+            Debug.LogError("The target is NULL");
         }
 
         _anim = GetComponent<Animator>();
@@ -98,12 +113,57 @@ public class Enemy : MonoBehaviour
             _isShieldActive = false;
         }
 
+        _rigidBody = GetComponent<Rigidbody2D>();
+
         movementType = (TypesOfMovement)Random.Range(0, 4);
     }
 
     void Update()
     {
-        switch (movementType) 
+        if (_target == null)
+        {
+            _isAgressive = false;
+            return;
+        }
+        float distance = Vector2.Distance(transform.position, _target.position);
+
+        if (distance < 5f && _hasRammed == false)
+        {
+            _isAgressive = true;
+        }
+        else
+        {
+            _isAgressive = false;
+        }
+
+        if(_hasRammed == true)
+        {
+            ramTimer -= Time.deltaTime;
+            if (ramTimer <= 0)
+            {
+                _hasRammed = false;
+            }
+        }
+
+
+        if (Time.time > _canFire && _isAlive == true)
+        {
+            FireLaser();
+        }
+        DetectPickUpAndShoot();
+
+    }
+    private void FixedUpdate()
+    {
+        if (_isAgressive)
+            Ram();
+        else
+            CalculateMovement(); // обычное движение
+    }
+
+    private void CalculateMovement()
+    {
+        switch (movementType)
         {
             case TypesOfMovement.Angular:
                 Angular();
@@ -121,13 +181,20 @@ public class Enemy : MonoBehaviour
                 Debug.Log("Default");
                 break;
         }
-
-        if (Time.time > _canFire && _isAlive == true)
-        {
-            FireLaser();
-        }
-        DetectPickUpAndShoot();
     }
+
+    void Ram()
+    {
+        if(_target == null || _rigidBody == null)
+        {
+            return;
+        }
+       
+        Vector2 direction = (_target.position - transform.position).normalized;
+        Vector2 newPos = _rigidBody.position + direction *  8 * Time.fixedDeltaTime;
+        _rigidBody.MovePosition(newPos);
+    }
+
 
     //Detect pickups
     void DetectPickUpAndShoot()
@@ -145,7 +212,6 @@ public class Enemy : MonoBehaviour
         }   
     }
 
-    //Detect player behind 
 
 
     //Type of movements
@@ -216,8 +282,17 @@ public class Enemy : MonoBehaviour
             {
                 player.Damage();
             }
-            Destroying();
-            _isAlive = false;
+            if(_isAgressive==true)
+            {
+                _hasRammed = true;
+                _isAgressive = false;
+                ramTimer = _ramCoolDown;
+                return;
+            }
+            
+             Destroying();
+                _isAlive = false;
+            
         }
         else if (other.tag == "Laser")
         {

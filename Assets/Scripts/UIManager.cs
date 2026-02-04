@@ -67,6 +67,7 @@ public class UIManager : MonoBehaviour
         if (shieldPercent == 0)
         {
             _shieldText.text = "";
+            _shieldController.rectTransform.sizeDelta = new Vector2(maxShieldWidth * shieldPercent, _shieldController.rectTransform.sizeDelta.y);
         }
         else
         {

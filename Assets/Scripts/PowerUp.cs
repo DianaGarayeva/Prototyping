@@ -12,11 +12,15 @@ public class PowerUp : MonoBehaviour
     private Transform target;
     private float rotationSpeed = 360f;
 
-    private void Update()
+    private void Start()
     {
         player = GameObject.Find("Player");
         target = player.transform;
-        
+
+    }
+    private void Update()
+    {
+      
         if (Input.GetKey(KeyCode.C))
         {
             Vector2 direction = target.position - transform.position;
