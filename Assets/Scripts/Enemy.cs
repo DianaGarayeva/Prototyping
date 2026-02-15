@@ -16,7 +16,8 @@ public class Enemy : MonoBehaviour
     private AudioSource _audioSource;
 
     //Agressive behavior
-    private bool _isAgressive = false;
+    private float _chanceForAgressiveBehavior; 
+    private bool _isAggressive = false;
     private bool _hasRammed = false;
     private float _ramCoolDown = 3f;
     private float ramTimer;
@@ -61,8 +62,8 @@ public class Enemy : MonoBehaviour
     private LayerMask _pickUpLayer;
     private float _nextPickUpFire = 0;
     private float _pickUpFireRate = 0.5f;
-    
 
+    private float _canFireBackwards;
 
 
     void Start()
@@ -100,9 +101,8 @@ public class Enemy : MonoBehaviour
             _audioSource.clip = _explosionAudio;
         }
 
-        float chance = Random.Range(0f, 1f);
-        //Debug.Log(chance);
-        if (chance <= 0.5)
+        float shieldChance = Random.Range(0f, 1f);
+        if (shieldChance <= 0.5)
         {
             _shield.SetActive(true);
             _isShieldActive = true;
@@ -112,6 +112,9 @@ public class Enemy : MonoBehaviour
             _shield.SetActive(false);
             _isShieldActive = false;
         }
+        _chanceForAgressiveBehavior = Random.Range(0f, 1f);
+
+        _canFireBackwards = Random.Range(0f, 1f);
 
         _rigidBody = GetComponent<Rigidbody2D>();
 
@@ -122,18 +125,19 @@ public class Enemy : MonoBehaviour
     {
         if (_target == null)
         {
-            _isAgressive = false;
+            _isAggressive = false;
             return;
         }
+
         float distance = Vector2.Distance(transform.position, _target.position);
 
-        if (distance < 5f && _hasRammed == false)
+        if (distance < 3f && _hasRammed == false && _chanceForAgressiveBehavior <= 0.5)
         {
-            _isAgressive = true;
+            _isAggressive = true;
         }
         else
         {
-            _isAgressive = false;
+            _isAggressive = false;
         }
 
         if(_hasRammed == true)
@@ -151,14 +155,15 @@ public class Enemy : MonoBehaviour
             FireLaser();
         }
         DetectPickUpAndShoot();
-
     }
+
+
     private void FixedUpdate()
     {
-        if (_isAgressive)
+        if (_isAggressive)
             Ram();
         else
-            CalculateMovement(); // обычное движение
+            CalculateMovement(); 
     }
 
     private void CalculateMovement()
@@ -195,24 +200,21 @@ public class Enemy : MonoBehaviour
         _rigidBody.MovePosition(newPos);
     }
 
-
     //Detect pickups
     void DetectPickUpAndShoot()
     {
         RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.down, _detectionDistance, _pickUpLayer);
-        Debug.DrawRay(
-            transform.position,
-            Vector2.down * _detectionDistance,
-            Color.red
-        );
+        //Debug.DrawRay(
+        //    transform.position,
+        //    Vector2.down * _detectionDistance,
+        //    Color.red
+        //);
         if (hit.collider != null && Time.time > _nextPickUpFire)
         {
             _nextPickUpFire = Time.time + _pickUpFireRate;
             FireLaser();
         }   
     }
-
-
 
     //Type of movements
     void Straight()
@@ -255,7 +257,16 @@ public class Enemy : MonoBehaviour
         {
             transform.position = new Vector3(Random.Range(-8f, 8f), 8f, 0);
         }
+        if(transform.position.x >= 11)
+        {
+            transform.position = new Vector3(Random.Range(-8f, 8f), 8f, 0);
+        }
+        if (transform.position.x <= -11)
+        {
+            transform.position = new Vector3(Random.Range(-8f, 8f), 8f, 0);
+        }   
     }
+
 
     // Fire for Enemy
     private void FireLaser()
@@ -269,8 +280,19 @@ public class Enemy : MonoBehaviour
             for (int i = 0; i < lasers.Length; i++)
             {
                 lasers[i].AssignEnemyLaser();
+                if(IsPlayerBehind() == true && _canFireBackwards<=0.5)
+                {
+                    lasers[i].EnemyLaserMovesUp();
+                }
             }
         }
+    }
+
+    private bool IsPlayerBehind()
+    {
+        Vector3 toPlayer = (_player.transform.position - transform.position).normalized;
+        float dot = Vector3.Dot(-transform.up, toPlayer);
+        return dot < 0;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -282,10 +304,10 @@ public class Enemy : MonoBehaviour
             {
                 player.Damage();
             }
-            if(_isAgressive==true)
+            if(_isAggressive==true)
             {
                 _hasRammed = true;
-                _isAgressive = false;
+                _isAggressive = false;
                 ramTimer = _ramCoolDown;
                 return;
             }

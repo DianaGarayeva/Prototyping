@@ -360,7 +360,7 @@ public class Player : MonoBehaviour
         yield return new WaitForSeconds(5f);
         _isNegativePowerUpActive = false;
     }
-    //Add score
+    //Add score 
     public void AddScore(int points)
     {
         _score += points;

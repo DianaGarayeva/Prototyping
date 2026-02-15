@@ -22,26 +22,27 @@ public class Asteroid : MonoBehaviour
         {
             Debug.LogError("Audio Source is NULL");
         }
+
         else
         {
             _audioSource.clip = _explosionAudio;
         }
-    }
-
-    void Update()
-    {
-        transform.Rotate(Vector3.forward * _rotationSpeed * Time.deltaTime);
-    }
-
-    public void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.tag == "Laser")
-        {
-            Instantiate(_explosion, transform.position, Quaternion.identity);
-            Destroy(other.gameObject);
-            _spawnManager.StartSpawning();
-            Destroy(this.gameObject, 0.25f);
-            _audioSource.Play();
         }
-    }
+
+        void Update()
+        {
+            transform.Rotate(Vector3.forward * _rotationSpeed * Time.deltaTime);
+        }
+
+        public void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.tag == "Laser")
+            {
+                Instantiate(_explosion, transform.position, Quaternion.identity);
+                Destroy(other.gameObject);
+                _spawnManager.StartSpawning();
+                Destroy(this.gameObject, 0.25f);
+                _audioSource.Play();
+            }
+        }
 }

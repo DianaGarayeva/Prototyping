@@ -1,36 +1,34 @@
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEngine;
 
 public class Camera_Shake : MonoBehaviour
 {
-    public float duration = 0.2f;    // как долго трясется
-    public float magnitude = 0.1f;   // сила тряски
-
-    private Vector3 initialPosition;
-    private float shakeTime = 0f;
+    public float _duration = 0.2f;   
+    public float _magnitude = 0.1f;   
+    private Vector3 _initialPosition;
+    private float _shakeTime = 0f;
 
     void Start()
     {
-        initialPosition = transform.localPosition;
+        _initialPosition = transform.position;
     }
 
     void Update()
     {
-        if (shakeTime > 0)
+        if (_shakeTime > 0)
         {
-            Vector2 shakeOffset = Random.insideUnitCircle * magnitude;
-            transform.localPosition = initialPosition + new Vector3(shakeOffset.x, shakeOffset.y, 0);
-            shakeTime -= Time.deltaTime;
+            Vector2 shakeOffset = Random.insideUnitCircle * _magnitude;
+            transform.position = _initialPosition + new Vector3(shakeOffset.x, shakeOffset.y, 0);
+            _shakeTime -= Time.deltaTime;
         }
         else
         {
-            transform.localPosition = initialPosition;
-        }
+            transform.position = _initialPosition;
+        }   
     }
 
     public void Shake()
     {
-        shakeTime = duration;
+        _shakeTime = _duration;
     }
 }

@@ -18,8 +18,8 @@ TagManager:
   - Water
   - UI
   - Post Process
-  - Enemy
   - EnemyLaser
+  - Enemy
   - PlayerLaser
   - PickUp
   - 

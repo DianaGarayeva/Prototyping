@@ -12,6 +12,7 @@ public class PowerUp : MonoBehaviour
     private Transform target;
     private float rotationSpeed = 360f;
 
+
     private void Start()
     {
         player = GameObject.Find("Player");

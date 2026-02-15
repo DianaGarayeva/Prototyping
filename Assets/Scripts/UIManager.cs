@@ -15,6 +15,8 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private Text _gameOver;
     [SerializeField]
+    private Text _victoryText; 
+    [SerializeField]
     private Text _restartText;
     [SerializeField]
     private GameManager _gameManager;
@@ -30,11 +32,16 @@ public class UIManager : MonoBehaviour
     private float maxShieldWidth;
     [SerializeField]
     private Text _ammoText;
+    [SerializeField]
+    private Image _bossHealthBar;
+    private float _maxBBWidth;
+    
     void Start()
     {
         maxWidth = _thrustersController.rectTransform.sizeDelta.x; 
         _score.text = "Score: " + 0;
         _gameOver.gameObject.SetActive(false);
+        _victoryText.gameObject.SetActive(false);
         _gameManager = GameObject.Find("Game_Manager").GetComponent<GameManager>();
         if (_gameManager == null)
         {
@@ -48,8 +55,13 @@ public class UIManager : MonoBehaviour
         _shieldText.text = "";
 
         _ammoText.text = "Shots: 15";
+        _maxBBWidth = _bossHealthBar.rectTransform.sizeDelta.x;
+        _bossHealthBar.rectTransform.sizeDelta = new Vector2(0, _bossHealthBar.rectTransform.sizeDelta.y);
     }
-
+    public void UpdateBossLives(float livesPercentage)
+    {
+        _bossHealthBar.rectTransform.sizeDelta = new Vector3(_maxBBWidth * livesPercentage, _bossHealthBar.rectTransform.sizeDelta.y);
+    }
     public void UpdateAmmo(int ammo)
     {
         if (ammo == 0)
@@ -103,7 +115,6 @@ public class UIManager : MonoBehaviour
         }
     }
 
-
     void GameOverSequence()
     {
         _gameOver.gameObject.SetActive(true);
@@ -111,7 +122,12 @@ public class UIManager : MonoBehaviour
         _gameManager.GameOver();
         StartCoroutine(GameOverFlickerRoutine());
     }
-
+    public void VictorySequence()
+    {
+        _victoryText.gameObject.SetActive(true);
+        _gameManager.GameOver();
+        _restartText.gameObject.SetActive(true);
+    }
 
     IEnumerator GameOverFlickerRoutine()
     {
