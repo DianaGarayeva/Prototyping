@@ -1,10 +1,12 @@
 using UnityEngine;
+using System.Collections;
 
 public class Enemy : MonoBehaviour
 {
     [SerializeField]
     private float _speed = 8.0f;
-
+    [SerializeField]
+    Vector3 _startPosition;
     [SerializeField]
     private Player _player;
 
@@ -65,11 +67,13 @@ public class Enemy : MonoBehaviour
 
     private float _canFireBackwards;
 
-
+    private float _chanceForDodging;
+    [SerializeField]
+    private GameObject _laserDetector; 
     void Start()
     {
         _isAlive = true;
-
+        _startPosition = transform.position;
         _startX = transform.position.x;
         _angle = Random.Range(-45f, 45f);
 
@@ -114,6 +118,16 @@ public class Enemy : MonoBehaviour
         }
         _chanceForAgressiveBehavior = Random.Range(0f, 1f);
 
+        _chanceForDodging = Random.Range(0f, 1f);
+
+        if (_chanceForDodging <= 0.5 && movementType==TypesOfMovement.Straight)
+        {
+            _laserDetector.SetActive(true);
+        }
+        else
+        {
+            _laserDetector.SetActive(false);
+        }
         _canFireBackwards = Random.Range(0f, 1f);
 
         _rigidBody = GetComponent<Rigidbody2D>();
@@ -149,11 +163,12 @@ public class Enemy : MonoBehaviour
             }
         }
 
-
         if (Time.time > _canFire && _isAlive == true)
         {
             FireLaser();
         }
+
+
         DetectPickUpAndShoot();
     }
 
@@ -164,6 +179,34 @@ public class Enemy : MonoBehaviour
             Ram();
         else
             CalculateMovement(); 
+    }
+
+    public void Dodging()
+    {
+        Debug.Log("Dodge colling");
+        StartCoroutine(DodgingRoutine());
+    }
+
+    IEnumerator DodgingRoutine()
+    {
+        float timer = 0;
+        _laserDetector.SetActive(false);
+        float dodgingSpeed = 5f; 
+        while (timer < 0.5f)
+        {
+            transform.Translate(Vector3.right * dodgingSpeed * Time.deltaTime);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        yield return new WaitForSeconds(1f);
+        timer = 0;
+        while (timer < 0.5f)
+        {
+            transform.Translate(Vector3.left * dodgingSpeed * Time.deltaTime);
+            timer += Time.deltaTime;
+            yield return null;
+        }
+        _laserDetector.SetActive(true);
     }
 
     private void CalculateMovement()

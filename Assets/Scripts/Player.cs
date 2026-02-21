@@ -41,8 +41,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _lives = 3;
 
-
-    [SerializeField]    
+    [SerializeField]
     private bool _isTripleShotActive = false;
     [SerializeField]
     private bool _isShieldActive = false;
@@ -75,6 +74,11 @@ public class Player : MonoBehaviour
     private int _maxShots = 15;
     private int _currentShot;
 
+    //Homing projectile
+    private bool _isHomingProjectileActive = false;
+    [SerializeField]
+    private GameObject _homingProjectile;
+
     //Special shot power-up
     private bool _isSpecialShotActive = false;
 
@@ -88,7 +92,7 @@ public class Player : MonoBehaviour
     {
         transform.position = new Vector3(0, 0, 0);
 
-         _spawnManager = GameObject.Find("Spawn Manager").GetComponent<SpawnManager>();
+        _spawnManager = GameObject.Find("Spawn Manager").GetComponent<SpawnManager>();
         if (_spawnManager == null)
         {
             Debug.LogError("The Spawn Manager is NULL");
@@ -107,7 +111,7 @@ public class Player : MonoBehaviour
         }
         else
         {
-            _audioSource.clip = _LaserSoundClip; 
+            _audioSource.clip = _LaserSoundClip;
         }
 
         cameraShake = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera_Shake>();
@@ -212,15 +216,19 @@ public class Player : MonoBehaviour
         {
             _currentShot--;
             Instantiate(_tripleShot, transform.position, Quaternion.identity);
-        }else if (_isSpecialShotActive == true)
+        } else if (_isSpecialShotActive == true)
         {
             _currentShot--;
             Vector3 angle = new Vector3(0, 0, 15f);
-            for(int i = 0; i < 24; i++)
+            for (int i = 0; i < 24; i++)
             {
-                Instantiate(_laserPrefab, transform.position, Quaternion.Euler(angle*i));
+                Instantiate(_laserPrefab, transform.position, Quaternion.Euler(angle * i));
             }
 
+        }else if(_isHomingProjectileActive == true)
+        {
+            _currentShot--;
+            Instantiate(_homingProjectile, transform.position + new Vector3(0f, 1f, 0f), Quaternion.identity);
         }
         else
         {
@@ -326,7 +334,7 @@ public class Player : MonoBehaviour
         _isSpecialShotActive = false;
     }
 
-    public void TripleShotActive() 
+    public void TripleShotActive()
     {
         _isTripleShotActive = true;
         StartCoroutine(TripleShotPowerDownRoutine());
@@ -366,4 +374,17 @@ public class Player : MonoBehaviour
         _score += points;
         _uiManager.UpdateScore(_score);
     }
+
+    public void ActiveHomingProjectile()
+    {
+        _isHomingProjectileActive = true;
+        StartCoroutine(HomingProjectileRoutine());
+    }
+
+    IEnumerator HomingProjectileRoutine()
+    {
+        yield return new WaitForSeconds(5f);
+        _isHomingProjectileActive = false;
+    }
 }
+

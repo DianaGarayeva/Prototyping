@@ -83,13 +83,11 @@ public class BossAI : MonoBehaviour
             return;
         }
 
-        if (Time.time >= _rotate)
+        if (Time.time >= _rotate && _target!=null)
         {
             _rotate = Time.time + _rotationRate;
-
             Vector2 direction = _target.position - transform.position;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 270f;
-
             _targetRotation = Quaternion.Euler(0, 0, angle);
         }
 

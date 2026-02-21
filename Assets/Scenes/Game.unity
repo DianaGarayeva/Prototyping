@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 13975579}
   - component: {fileID: 13975581}
   - component: {fileID: 13975580}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Thruster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -810,7 +810,7 @@ GameObject:
   - component: {fileID: 863721243}
   - component: {fileID: 863721246}
   - component: {fileID: 863721247}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -853,6 +853,7 @@ MonoBehaviour:
   _leftEngine: {fileID: 909543946}
   _explosion: {fileID: 2035435475120565745, guid: 1fbad4219a2bef3488e2c2051446f6d6, type: 3}
   _LaserSoundClip: {fileID: 8300000, guid: 75676f361bdfeaf41a46623e95df3dbc, type: 3}
+  _homingProjectile: {fileID: 9022800258700084628, guid: eeb67a2be5fe09f4a902aeef708e1551, type: 3}
 --- !u!212 &863721244
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -1186,7 +1187,7 @@ GameObject:
   - component: {fileID: 909543947}
   - component: {fileID: 909543948}
   - component: {fileID: 909543949}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Left_Engine (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1292,7 +1293,7 @@ GameObject:
   - component: {fileID: 950814265}
   - component: {fileID: 950814264}
   - component: {fileID: 950814266}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Shield_Visualizer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1634,7 +1635,7 @@ GameObject:
   - component: {fileID: 1022470088}
   - component: {fileID: 1022470089}
   - component: {fileID: 1022470090}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Right_Engine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1924,13 +1925,13 @@ MonoBehaviour:
   - {fileID: 8808963617185569007, guid: 682a9e69061234643ad53f34c7b2901f, type: 3}
   - {fileID: 2338634373019128016, guid: e54c536fc57fe614d9efd97330e0210c, type: 3}
   - {fileID: 3102922318040704643, guid: c80d163422954be4ab07065ba5f9841f, type: 3}
-  - {fileID: 3353157279778926485, guid: 1136aa5dada42784ebcf005666d8d009, type: 3}
+  - {fileID: 8941312367439372575, guid: 1136aa5dada42784ebcf005666d8d009, type: 3}
   - {fileID: 659182315146115735, guid: 8885d2da6de0dea4787a670fb6b1e48b, type: 3}
   - {fileID: 5718961214447193908, guid: c39e91c04d81e6947a9c50f2f61ffc74, type: 3}
   - {fileID: 9154202702959074483, guid: 51870cb05caa58f4b8aa832e8dfbf473, type: 3}
-  _powerUpFrequency: 05000000050000000500000007000000030000000200000004000000
+  - {fileID: 5503105110564611326, guid: fc36748a9c842984e84c7bb253bc0fc9, type: 3}
+  _powerUpFrequency: 0500000005000000050000000800000003000000010000000300000001000000
   _boss: {fileID: 3541887455549912088, guid: f260b48debe13154399cefa945005d84, type: 3}
-  _bossHealth: {fileID: 0}
 --- !u!1001 &1318555844
 PrefabInstance:
   m_ObjectHideFlags: 0

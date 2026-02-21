@@ -72,7 +72,10 @@ public class PowerUp : MonoBehaviour
                         break;
                     case 6:
                         player.NegativePowerUpActive();
-                        break;  
+                        break;
+                    case 7:
+                        player.ActiveHomingProjectile();
+                        break;
                     default:
                         Debug.Log("Default");
                         break;
